@@ -11,9 +11,28 @@ player1_pos = (0, 8)
 player2_pos = (16, 8)
 
 def show_board(matrix):
-    for row in matrix:
-        print(' '.join(str(cell) for cell in row))
-    print()
+    for i in range(17):
+        if i % 2 == 0:
+            for j in range(17):
+                if j % 2 == 0 and matrix[i][j] == 0:
+                    print('+', end='')
+                if j % 2 == 0 and matrix[i][j] != 0:
+                    print(matrix[i][j], end='')
+                if j % 2 != 0 and matrix[i][j] == 0:
+                    print(' ', end='')
+                if j % 2 != 0 and matrix[i][j] != 0:
+                    print(matrix[i][j], end='')
+            print()
+        else:
+            for j in range(17):
+                if j%2 == 0 and matrix[i][j] != 0 :
+                    print(matrix[i][j], end='')
+                if j%2 == 0 and matrix[i][j] == 0:
+                    print(' ', end='')
+                if j%2 != 0 :
+                    print(' ', end='')
+            print()
+
 
 def is_valid_move_player(matrix, player_pos, move):
     '''
@@ -101,6 +120,10 @@ def is_valid_wall(matrix, wall_pos, move1, move2):
     x, y = wall_pos
     x = 2 * x - 2
     y = 2 * y - 2
+    for i in range(1,17,2):
+        for j in range(1,17,2):
+            matrix[i][j] = 0
+            
     if move1 == 'up' and move2 == 'right':
         return x > 0 and y < 15 and matrix[x-1][y] == 0 and matrix[x-1][y+1] == 0 and matrix[x-1][y+2] == 0
     elif move1 == 'up' and move2 == 'left':
@@ -109,6 +132,14 @@ def is_valid_wall(matrix, wall_pos, move1, move2):
         return x < 15 and y < 15 and matrix[x+1][y] == 0 and matrix[x+1][y+1] == 0 and matrix[x+1][y+2] == 0
     elif move1 == 'down' and move2 == 'left':
         return x < 15 and y > 0 and matrix[x+1][y] == 0 and matrix[x+1][y-1] == 0 and matrix[x+1][y-2] == 0
+    elif move1 == 'right' and move2 == 'up':
+        return x > 0 and y < 15 and matrix[x][y+1] == 0 and matrix[x-1][y+1] == 0 and matrix[x-2][y+1] == 0
+    elif move1 == 'right' and move2 == 'down':
+        return x < 15 and y < 15 and matrix[x][y+1] == 0 and matrix[x+1][y+1] == 0 and matrix[x+2][y+1] == 0
+    elif move1 == 'left' and move2 == 'up':
+        return x > 0 and y > 0 and matrix[x][y-1] == 0 and matrix[x-1][y-1] == 0 and matrix[x-2][y-1] == 0
+    elif move1 == 'left' and move2 == 'down':
+        return x < 15 and y > 0 and matrix[x][y-1] == 0 and matrix[x+1][y-1] == 0 and matrix[x+2][y-1] == 0
     return False
 
 def move_player(matrix, player_pos, move, player_number):
@@ -133,19 +164,19 @@ def move_player(matrix, player_pos, move, player_number):
         matrix[x][y] = 0
         matrix[x][y+2] = player_number
         player_pos = (x, y+2)
-    elif move == 'up-to-left' and x > 1 and y > 1:
+    elif move == 'up-left' and x > 1 and y > 1:
         matrix[x][y] = 0
         matrix[x-2][y-2] = player_number
         player_pos = (x-2, y-2)
-    elif move == 'up-to-right' and x > 1 and y < 15:
+    elif move == 'up-right' and x > 1 and y < 15:
         matrix[x][y] = 0
         matrix[x-2][y+2] = player_number
         player_pos = (x-2, y+2)
-    elif move == 'down-to-left' and x < 15 and y > 1:
+    elif move == 'down-left' and x < 15 and y > 1:
         matrix[x][y] = 0
         matrix[x+2][y-2] = player_number
         player_pos = (x+2, y-2)
-    elif move == 'down-to-right' and x < 15 and y < 15:
+    elif move == 'down-right' and x < 15 and y < 15:
         matrix[x][y] = 0
         matrix[x+2][y+2] = player_number
         player_pos = (x+2, y+2)
@@ -219,9 +250,8 @@ def dfs_1(matrix, player_pos, visited=None):
     if x == 16:
         return True
     visited.add((x, y))
-    moves = ['up', 'down', 'left', 'right', 'down-to-left', 'down-to-right', 'up-to-left', 'up-to-right']
-    for move in moves:
-        if is_valid_move_player(matrix, player_pos, move):
+
+    for move in all_valid_moves(matrix, player_pos):
             matrix_copy = copy.deepcopy(matrix)
             new_pos = move_player(matrix_copy, player_pos, move, 1)
             if new_pos not in visited:
@@ -236,9 +266,7 @@ def dfs_2(matrix, player_pos, visited=None):
     if x == 0:
         return True
     visited.add((x, y))
-    moves = ['up', 'down', 'left', 'right', 'down-to-left', 'down-to-right', 'up-to-left', 'up-to-right']
-    for move in moves:
-        if is_valid_move_player(matrix, player_pos, move):
+    for move in all_valid_moves(matrix, player_pos):
             matrix_copy = copy.deepcopy(matrix)
             new_pos = move_player(matrix_copy, player_pos, move, 2)
             if new_pos not in visited:
@@ -264,27 +292,22 @@ def is_winner2(player_pos):
         return True
     return False
 
-def is_valid_move(matrix, player_pos, move, player_number):
-    '''
-    This function checks if the move is valid by considering all conditions
-    '''
-    if is_valid_move_player(matrix, player_pos, move):
-        return True
-    if is_special_move(matrix, player_pos, move):
-        return True
-    if player_number == 1:
-        if dfs_1(matrix, player_pos):
-            return True
-    elif player_number == 2:
-        if dfs_2(matrix, player_pos):
-            return True
-    return False
 
 player1_walls = 10
 player2_walls = 10
-current_player = 1
+current_player = random.choice([1, 2])
+counter = 0
 
 while True:
+    if counter >11:
+        if is_winner1(player1_pos):
+            print("Player 1 won!")
+            break
+        elif is_winner2(player2_pos):
+            print("Player 2 won!")
+            break
+  
+
     print(f"It is the turn of player {current_player}")
     print(f"Player 1 walls: {player1_walls} | Player 2 walls: {player2_walls}")
     action = input("Do you want to 'move' or 'place wall'? ").strip().lower()
@@ -295,12 +318,14 @@ while True:
         if current_player == 1:
             if move in valid_moves:
                 player1_pos = move_player(matrix, player1_pos, move, 1)
+                counter += 1
             else:
                 print("Invalid move! Try again.")
                 continue
         else:
             if move in valid_moves:
                 player2_pos = move_player(matrix, player2_pos, move, 2)
+                counter += 1
             else:
                 print("Invalid move! Try again.")
                 continue
@@ -311,26 +336,26 @@ while True:
             j = int(input("Enter wall position (column): "))
             orientation = input("Enter wall orientation (e.g., 'up-right', 'down-left'): ").strip().split('-')
             if is_valid_wall(matrix, (i, j), orientation[0], orientation[1]):
-                place_wall(matrix, (i, j), orientation[0], orientation[1])
-                if current_player == 1:
-                    player1_walls -= 1
-                else:
-                    player2_walls -= 1
+                new_matrix = copy.deepcopy(matrix)
+                place_wall(new_matrix, (i, j), orientation[0], orientation[1])
+                if dfs_1(new_matrix, player1_pos) and dfs_2(new_matrix, player2_pos):
+                    place_wall(matrix, (i, j), orientation[0], orientation[1])
+                    counter += 1
+                    if current_player == 1:
+                        player1_walls -= 1
+                    else:
+                        player2_walls -= 1
             else:
                 print("Invalid wall placement. Try again.")
+                continue
         else:
             print("No walls left for this player!")
+            continue
     else:
         print("Invalid action! Please choose 'move' or 'place wall'.")
         continue
 
     show_board(matrix)
     
-    if is_winner1(player1_pos):
-        print("Player 1 won!")
-        break
-    elif is_winner2(player2_pos):
-        print("Player 2 won!")
-        break
 
     current_player = 2 if current_player == 1 else 1
