@@ -23,26 +23,19 @@ def move_player(matrix, player_pos, move, player_number):
         matrix[x][y] = 0
         matrix[x][y-2] = player_number
         player_pos = [x, y-2]
-
-
-def special_moves(matrix, player_pos, move, player_number):
-    '''
-    this funtion works when we need an especial move
-    '''
-    x, y = player_pos
-    if move == 'up-right' and x > 0 and y < 15:
+    elif move == 'up-to-right' and x > 0 and y < 15:
         matrix[x][y] = 0
         matrix[x-2][y+2] = player_number
         player_pos = [x-2, y+2]
-    if move == 'up-left' and x > 0 and y > 0:
+    elif move == 'up-to-left' and x > 0 and y > 0:
         matrix[x][y] = 0
         matrix[x-2][y-2] = player_number
         player_pos = [x-2, y-2]
-    if move == 'down-right' and x < 15 and y < 15:
+    elif move == 'down-to-right' and x < 15 and y < 15:
         matrix[x][y] = 0
         matrix[x+2][y+2] = player_number
         player_pos = [x+2, y+2]
-    if move == 'down-left' and x < 15 and y > 0:
+    elif move == 'down-to-left' and x < 15 and y > 0:
         matrix[x][y] = 0
         matrix[x+2][y-2] = player_number
         player_pos = [x+2, y-2]
@@ -58,24 +51,32 @@ def place_wall(matrix , wall_pos, move1 , move2):
     if move1 == 'up' and move2 == 'right' and x>0 and y<15:
         matrix[x-1][y] = '-'
         matrix[x-1][y+1] = '-'
+        matrix[x-1][y+2] = '-'
     if move1 == 'up' and move2 == 'left' and x>0 and y>0:
         matrix[x-1][y] = '-'
         matrix[x-1][y-1] = '-'
+        matrix[x-1][y-2] = '-'
     if move1 == 'down' and move2 == 'right' and x<15 and y<15:
         matrix[x+1][y] = '-'
         matrix[x+1][y+1] = '-'
+        matrix[x+1][y+2] = '-'
     if move1 == 'down' and move2 == 'left' and x<15 and y>0:
         matrix[x+1][y] = '-'
         matrix[x+1][y-1] = '-'
+        matrix[x+1][y-2] = '-'
     if move1 == 'right' and move2 == 'up' and x>0 and y<15:
         matrix[x][y+1] = '|'
         matrix[x-1][y+1] = '|'
+        matrix[x-2][y+1] = '|'
     if move1 == 'right' and move2 == 'down' and x<15 and y<15:
         matrix[x][y+1] = '|'
         matrix[x+1][y+1] = '|'
+        matrix[x+2][y+1] = '|'
     if move1 == 'left' and move2 == 'up' and x>0 and y>0:
         matrix[x][y-1] = '|'
         matrix[x-1][y-1] = '|'
+        matrix[x-2][y-1] = '|'
     if move1 == 'left' and move2 == 'down' and x<15 and y>0:
         matrix[x][y-1] = '|'
         matrix[x+1][y-1] = '|'
+        matrix[x+2][y-1] = '|'
