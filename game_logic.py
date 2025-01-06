@@ -120,9 +120,7 @@ def is_valid_wall(matrix, wall_pos, move1, move2):
     x, y = wall_pos
     x = 2 * x - 2
     y = 2 * y - 2
-    for i in range(1,17,2):
-        for j in range(1,17,2):
-            matrix[i][j] = 0
+
             
     if move1 == 'up' and move2 == 'right':
         return x > 0 and y < 15 and matrix[x-1][y] == 0 and matrix[x-1][y+1] == 0 and matrix[x-1][y+2] == 0
@@ -196,12 +194,9 @@ def move_player(matrix, player_pos, move, player_number):
         matrix[x][y] = 0
         matrix[x][y+4]=player_number
         player_pos = (x, y+4)
-    if player_number == 1:
-        player1_pos = player_pos
-    elif player_number == 2:
-        player2_pos = player_pos
 
-    return player_pos
+    return player_pos  
+
 
 def place_wall(matrix, wall_pos, move1, move2):
     '''
