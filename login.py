@@ -2,6 +2,7 @@ import os
 import keyboard
 import json
 import uuid
+import hashpass
 
 users_json = './users.json'
 
@@ -10,6 +11,7 @@ def clear_screen():
 
 def display_menu(options, selected_index):
     clear_screen()
+    
     for index, option in enumerate(options):
         if index == selected_index:
             print(f"> {option}  ")
@@ -56,6 +58,7 @@ def sign_up():
     user_id = str(uuid.uuid4())
     users = load_users()
 
+    hashed_pass = hashpass.hash_password(pas)
 
     if user == "exit" or pas == "exit" or email == "exit":
         main_menu()
@@ -65,12 +68,13 @@ def sign_up():
     while not email_check:
         print("please enter a correct email")
         email = input("Email: ")
+
         email_check = check_email(email)
 
     user_info ={'ID': user_id,
                 'username': user,
                 'email': email,
-                'password': pas}
+                'password': hashed_pass}
     
     user_check = check_user(users, user, email)
 
@@ -83,6 +87,7 @@ def sign_up():
     if user_check:
         add_user(user_info)
 
+    
 def check_email(email):
     import re
 
@@ -146,25 +151,26 @@ def log_in():
     if pas == "exit":
         print("Exiting the game. Goodbye")
         exit()
+    
 
     users = load_users()
-    user_check = user_in_json(users, user, pas)
-
+    user_check = hashpass.check_password(user, pas)
 
     while not user_check:
         print("user not found. try again.")
         user = input("Username: ")
         pas = input("Password: ")
         
-        user_check = user_in_json(users, user, pas)
+        user_check = hashpass.check_password(user, pas)
         if user == "exit":
             print("Exiting the game. Goodbye")
             exit()
         if pas == "exit":
             print("Exiting the game. Goodbye")
             exit()
-        if user_check:
-            print(f"successfully logged in as {user}")
+    if user_check:
+        print(f"successfully logged in as {user}")
+
 
 
 choice = main_menu()
@@ -173,4 +179,8 @@ if choice == "Sign Up":
     
 if choice == "Login":
     log_in()
+
+if choice == "exit":
+    print("Exiting the game. Goodbye")
+    exit()
 
