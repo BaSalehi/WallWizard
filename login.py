@@ -1,43 +1,14 @@
 import os
-import keyboard
 import json
 import uuid
 import hashpass
 
-users_json = './users.json'
-
-def clear_screen():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-def display_menu(options, selected_index):
-    clear_screen()
-    
-    for index, option in enumerate(options):
-        if index == selected_index:
-            print(f"> {option}  ")
-        else:
-            print(f"  {option}  ")
+users_json = 'WallWizard/users.json'
 
 def main_menu():
-    options = ["Login", "Sign Up", "Exit"]
-    selected_index = 0
-
-    while True:
-        display_menu(options, selected_index)
-
-        if keyboard.is_pressed('up'):
-            selected_index = (selected_index - 1) % len(options)
-            while keyboard.is_pressed('up'):
-                pass
-        elif keyboard.is_pressed('down'):
-            selected_index = (selected_index + 1) % len(options)
-            while keyboard.is_pressed('down'):
-                pass
-        elif keyboard.is_pressed('enter'):
-            break
-
-    return options[selected_index]
-
+    print("choose an option for the first player")
+    option = input("1.Login\n2.Sign Up\n3.Exit\n")
+    return option
 
 def sign_up():
     user = input("Username: ")
@@ -68,7 +39,9 @@ def sign_up():
     while not email_check:
         print("please enter a correct email")
         email = input("Email: ")
-
+        if email == "exit":
+            print("Exiting the game. Goodbye")
+            exit()
         email_check = check_email(email)
 
     user_info ={'ID': user_id,
@@ -82,10 +55,17 @@ def sign_up():
         print("Username or email is already taken. Please try again.")
         user = input("Username: ")
         email = input("Email: ")
+        if user == "exit":
+            print("Exiting the game. Goodbye")
+            exit()
+        if email == "exit":
+            print("Exiting the game. Goodbye")
+            exit()
         user_check = check_user(users, user, email)
         
     if user_check:
         add_user(user_info)
+        return user
 
     
 def check_email(email):
@@ -101,17 +81,17 @@ def check_email(email):
         return False
 
 def load_users():
-    if os.path.exists('./users.json'):
-        with open('./users.json', 'r') as file:
+    if os.path.exists('WallWizard/users.json'):
+        with open('WallWizard/users.json', 'r') as file:
             return json.load(file)
     return []
-
+    
 
 def add_user(user):
     users = []
-    if os.path.exists('./users.json'):
+    if os.path.exists('WallWizard/users.json'):
         try:
-            with open('./users.json', 'r') as file:
+            with open('WallWizard/users.json', 'r') as file:
                 users = json.load(file)
         except json.JSONDecodeError:
             print("Error reading JSON file. Initializing with an empty list.")
@@ -122,7 +102,7 @@ def add_user(user):
     users.append(user)
 
     try:
-        with open('./users.json', 'w') as file:
+        with open('WallWizard/users.json', 'w') as file:
             json.dump(users, file, indent=4)
     except Exception as e:
         print(f"An error occurred while writing to the file: {e}")
@@ -152,35 +132,21 @@ def log_in():
         print("Exiting the game. Goodbye")
         exit()
     
-
     users = load_users()
     user_check = hashpass.check_password(user, pas)
 
     while not user_check:
         print("user not found. try again.")
         user = input("Username: ")
-        pas = input("Password: ")
-        
-        user_check = hashpass.check_password(user, pas)
         if user == "exit":
             print("Exiting the game. Goodbye")
             exit()
+        pas = input("Password: ")
         if pas == "exit":
             print("Exiting the game. Goodbye")
             exit()
+        user_check = hashpass.check_password(user, pas)
     if user_check:
         print(f"successfully logged in as {user}")
-
-
-
-choice = main_menu()
-if choice == "Sign Up":
-    sign_up()
-    
-if choice == "Login":
-    log_in()
-
-if choice == "exit":
-    print("Exiting the game. Goodbye")
-    exit()
+        return user
 

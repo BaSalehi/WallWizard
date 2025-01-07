@@ -1,0 +1,20 @@
+[
+    {
+        "ID": "0a2bd3d3-8ca5-4a80-960b-6db7c5f2b93f",
+        "username": "baran",
+        "email": "leone@gmail.com",
+        "password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
+    },
+    {
+        "ID": "3a118ae9-a578-45df-ae8e-b49b18a19f7a",
+        "username": "mina",
+        "email": "mina@gmail.com",
+        "password": "38083c7ee9121e17401883566a148aa5c2e2d55dc53bc4a94a026517dbff3c6b"
+    },
+    {
+        "ID": "57238874-702b-4b15-ba8e-224c5fddd22d",
+        "username": "soroush",
+        "email": "soroush@gmail.com",
+        "password": "ceaa28bba4caba687dc31b1bbe79eca3c70c33f871f1ce8f528cf9ab5cfd76dd"
+    }
+]

@@ -7,8 +7,8 @@ def hash_password(password):
 
 
 def check_password(username, password):
-    if os.path.exists('./users.json'):
-        with open('./users.json', 'r') as f:
+    if os.path.exists('WallWizard/users.json'):
+        with open('WallWizard/users.json', 'r') as f:
             users = json.load(f)
 
         for user in users:
