@@ -28,3 +28,12 @@ def display_gamehistory(gamehistory):
     
     console.print(title_panel)
     console.print(table)
+    
+def gamehistory():
+    file_name = 'games.json'
+    games = load_users(file_name)  
+    gamehistory = create_leaderboard(games)  
+    display_gamehistory(gamehistory)  
+
+
+gamehistory()
