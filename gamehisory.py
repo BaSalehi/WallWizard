@@ -10,3 +10,21 @@ def load_users(json_file):
 def create_leaderboard(games):
     sorted_games = sorted(games, key=lambda x: x.get('ID', 0), reverse=True)
     return sorted_games
+
+def display_gamehistory(gamehistory):
+    console = Console()
+
+    title_panel = Panel("GAME HISTORY", title=" ", border_style="bold blue", expand=True, padding=(1, 65), style="bold white")
+
+    table = Table(title="", title_justify="center")
+    table.add_column("GAME ID", justify="center", style="cyan", no_wrap=True)
+    table.add_column("Player 1", justify="left", style="magenta")
+    table.add_column("Player 2", justify="left", style="magenta")
+    table.add_column("Winner", justify="left", style="green")
+
+    for game in gamehistory:
+        table.add_row(str(game['ID']), game['player1'], game['player2'], game['winer'])
+
+    
+    console.print(title_panel)
+    console.print(table)
