@@ -5,6 +5,7 @@ import json
 import login
 import user_interface
 import gamehistory
+import leaderboard
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
@@ -506,8 +507,11 @@ while outer_loop:
             e = gamehistory.exit_choice()
             if e == 'e':
                 continue
-            
-
+        elif choice2 == '5':
+            leaderboard.leaderboard_main()
+            e = leaderboard.exit_choice()
+            if e == 'e':
+                continue
 while True:
     if choice2 == '1':
         new_id = generate_id()

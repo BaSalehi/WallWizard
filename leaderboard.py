@@ -22,11 +22,11 @@ def display_leaderboard(leaderboard):
     khode_leaderboard.add_column("tafazol", justify="right", style="spring_green4")  
     khode_leaderboard.add_column("WINS", justify="right", style="bright_magenta")
     khode_leaderboard.add_column("LOSSES", justify="right", style="red")
-    khode_leaderboard.add_column("TIME PLAY", justify="right", style="cyan")
+    khode_leaderboard.add_column("PLAY TIME", justify="right", style="cyan")
 
     for index, user in enumerate(leaderboard):
-        tafazol = user['win'] - user['lose'] 
-        khode_leaderboard.add_row(str(index + 1), user['username'], str(tafazol), str(user['win']), str(user['lose']), str(user['timeplay']))
+        tafazol = user['wins'] - user['losses'] 
+        khode_leaderboard.add_row(str(index + 1), user['username'], str(tafazol), str(user['wins']), str(user['losses']), str(user['play_time']))
 
     
     console.print(onvan)
@@ -39,5 +39,6 @@ def leaderboard_main():
     display_leaderboard(leaderboard)  
 
 
-
-leaderboard_main()
+def exit_choice():
+    e = input("enter e to exit: ")
+    return e

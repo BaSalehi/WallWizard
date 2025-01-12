@@ -47,7 +47,11 @@ def sign_up():
     user_info ={'ID': user_id,
                 'username': user,
                 'email': email,
-                'password': hashed_pass}
+                'password': hashed_pass,
+                'score':0,
+                'wins': 0,
+                'losses': 0,
+                'play_time': 0}
     
     user_check = check_user(users, user, email)
 
