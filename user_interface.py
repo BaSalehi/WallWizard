@@ -28,34 +28,37 @@ def second_user_choice():
         return
     return user2
 
+# outer_loop = True 
+# inner_loop = True
 
-outer_loop = True 
-
-while outer_loop:
-    choice1= login.main_menu()
-    if choice1 == '1':
-        user1 = login.log_in()
-    elif choice1 == '2':
-        user1 = login.sign_up()
-    else:
-        print("Exiting the game. Goodbye")
-        exit()
+# while outer_loop:
+#     choice1= login.main_menu()
+#     if choice1 == '1':
+#         user1 = login.log_in()
+#     elif choice1 == '2':
+#         user1 = login.sign_up()
+#     else:
+#         print("Exiting the game. Goodbye")
+#         exit()
     
-    while True:
-        choice2 = game_menu()
-        if choice2 == '1':
-            user2 = second_user_choice()
-            if user2 == None:
-                continue
-            else:
-                outer_loop = False
-                break
-        elif choice2 == '2':
-            user2 = second_user_choice()
-            if user2 == None:
-                continue
-            else: 
-                game_id = load_game(user1, user2, "WallWizard/games.json")
-                break
-        elif choice2 == '3':
-            break
+#     while inner_loop:
+#         choice2 = game_menu()
+#         if choice2 == '1':
+#             user2 = second_user_choice()
+#             if user2 == None:
+#                 continue
+#             else:
+#                 outer_loop = False
+#                 inner_loop = False
+#                 break
+#         elif choice2 == '2':
+#             user2 = second_user_choice()
+#             if user2 == None:
+#                 continue
+#             else: 
+#                 game_id = load_game(user1, user2, "WallWizard/games.json")
+#                 outer_loop = False
+#                 inner_loop = False
+#                 break
+#         elif choice2 == '3':
+#             break

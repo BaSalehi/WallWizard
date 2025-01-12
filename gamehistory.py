@@ -3,7 +3,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 
-def load_users(json_file):
+def load_games(json_file):
     with open(json_file, 'r') as file:
         return json.load(file)
 
@@ -23,17 +23,17 @@ def display_gamehistory(gamehistory):
     table.add_column("Winner", justify="left", style="green")
 
     for game in gamehistory:
-        table.add_row(str(game['ID']), game['player1'], game['player2'], game['winer'])
-
+        table.add_row(str(game['ID']), game['player1'], game['player2'], str(game['winner']))
     
     console.print(title_panel)
     console.print(table)
     
 def gamehistory():
-    file_name = 'games.json'
-    games = load_users(file_name)  
+    file_name = 'WallWizard/games.json'
+    games = load_games(file_name)  
     gamehistory = create_leaderboard(games)  
     display_gamehistory(gamehistory)  
 
-
-gamehistory()
+def exit_choice():
+    e = input("enter e to exit: ")
+    return e
