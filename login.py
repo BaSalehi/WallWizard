@@ -2,11 +2,13 @@ import os
 import json
 import uuid
 import hashpass
+from rich.console import Console
+console = Console()
 
 users_json = 'WallWizard/users.json'
 
 def main_menu():
-    print("choose an option for the first player")
+    console.print("choose an option for the first player", style="cyan")
     option = input("1.Login\n2.Sign Up\n3.Exit\n")
     return option
 
@@ -15,17 +17,43 @@ def sign_up():
     if user == "exit":
         print("Exiting the game. Goodbye")
         exit()
+    while user == None:
+        console.print("username cannot be empty.", style="red")
+        user = input("Username: ")
+        if user == "exit":
+            print("Exiting the game. Goodbye")
+            exit()
 
     pas = input("Password: ")
     if pas == "exit":
         print("Exiting the game. Goodbye")
         exit()
 
+    while pas == None:
+        console.print("password cannot be empty.", style="red")
+        pas = input("Password: ")   
+        if pas == "exit":
+            print("Exiting the game. Goodbye")
+            exit()
+
+    while len(pas) < 8:
+        console.print("password should be longer than or equal to 8 characters.", style="red")
+        pas = input("Password: ")
+        if pas == "exit":
+            print("Exiting the game. Goodbye")
+            exit()
+
     email = input("Email: ")
     if email == "exit":
         print("Exiting the game. Goodbye")
         exit()
-        
+    while email == None:
+        console.print("email cannot be empty.", style="red")
+        email = input("Email: ")
+        if email == "exit":
+            console.print("Exiting the game. Goodbye", style="green")
+            exit()
+
     user_id = str(uuid.uuid4())
     users = load_users()
 
@@ -37,10 +65,16 @@ def sign_up():
     email_check = check_email(email)
 
     while not email_check:
-        print("please enter a correct email")
+        console.print("please enter a correct email", style="bold red")
         email = input("Email: ")
+        while email == None:
+            console.print("email cannot be empty.", style="red")
+            email = input("Email: ")
+            if email == "exit":
+                console.print("Exiting the game. Goodbye", style="green")
+                exit()
         if email == "exit":
-            print("Exiting the game. Goodbye")
+            console.print("Exiting the game. Goodbye", style="green")
             exit()
         email_check = check_email(email)
 
@@ -56,19 +90,34 @@ def sign_up():
     user_check = check_user(users, user, email)
 
     while not user_check:
-        print("Username or email is already taken. Please try again.")
+        console.print("Username or email is already taken. Please try again.", style="bold red")
         user = input("Username: ")
+        while user == None:
+            console.print("username cannot be empty.", style="red")
+            user = input("Username: ")
+            if user == "exit":
+                print("Exiting the game. Goodbye")
+                exit()
+
         email = input("Email: ")
+        while email == None:
+            console.print("email cannot be empty.", style="red")
+            email = input("Email: ")
+            if email == "exit":
+                console.print("Exiting the game. Goodbye", style="green")
+                exit()
+
         if user == "exit":
-            print("Exiting the game. Goodbye")
+            console.print("Exiting the game. Goodbye", style="green")
             exit()
         if email == "exit":
-            print("Exiting the game. Goodbye")
+            console.print("Exiting the game. Goodbye", style="green")
             exit()
         user_check = check_user(users, user, email)
         
     if user_check:
         add_user(user_info)
+        console.print(f"successfully signed-up {user}", style="bold green")
         return user
 
     
@@ -128,29 +177,44 @@ def user_in_json(users, username, password):
 
 def log_in():
     user = input("Username: ")
-    if user == "exit":
-        print("Exiting the game. Goodbye")
-        exit()
-    pas = input("Password: ")
-    if pas == "exit":
-        print("Exiting the game. Goodbye")
-        exit()
-    
-    users = load_users()
-    user_check = hashpass.check_password(user, pas)
-
-    while not user_check:
-        print("user not found. try again.")
+    while user == None:
+        console.print("username cannot be empty.", style="red")
         user = input("Username: ")
         if user == "exit":
             print("Exiting the game. Goodbye")
             exit()
-        pas = input("Password: ")
+    if user == "exit":
+        console.print("Exiting the game. Goodbye", style="green")
+        exit()
+
+    pas = input("Password: ")
+
+    while pas == None:
+        console.print("password cannot be empty.", style="red")
+        pas = input("Password: ")   
         if pas == "exit":
             print("Exiting the game. Goodbye")
             exit()
+
+    if pas == "exit":
+        console.print("Exiting the game. Goodbye", style="green")
+        exit()
+
+    users = load_users()
+    user_check = hashpass.check_password(user, pas)
+
+    while not user_check:
+        console.print("user not found. try again.", style="bold red")
+        user = input("Username: ")
+        if user == "exit":
+            console.print("Exiting the game. Goodbye", style="green")
+            exit()
+        pas = input("Password: ")
+        if pas == "exit":
+            console.print("Exiting the game. Goodbye", style="green")
+            exit()
         user_check = hashpass.check_password(user, pas)
     if user_check:
-        print(f"successfully logged in as {user}")
+        console.print(f"successfully logged in as {user}", style="bold green")
         return user
 

@@ -9,9 +9,7 @@ import leaderboard
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
-
-
-
+console = Console()
 
 class Game:
     def __init__(self, id, user1, user2, user1_position, user2_position, user1_walls, user2_walls, game_board, current_player):
@@ -26,10 +24,26 @@ class Game:
         self.current_player = current_player
         self.winner = 0
 
-    
+sample_game = {
+        "ID": 1,
+        "player1": "Player 1",
+        "player2": "Player 2",
+        "user1_position": [
+            0,
+            8
+        ],
+        "user2_position": [
+            16,
+            8
+        ],
+        "user1_walls": 10,
+        "user2_walls": 10,
+        "game_board": [],
+        "current_player": 1,
+        "winner": 0
+    }
 
 def update_item(file_path, item_id, new_value):
-
     with open(file_path, 'r') as file:
         games = json.load(file)
     new_game = list()    
@@ -69,7 +83,6 @@ def add_game(game_info):
             json.dump(games, file, indent=4)
     except Exception as e:
         print(f"An error occurred while writing to the file: {e}")
-
 
 def matrix():
     return [[0 for i in range(17)] for j in range(17)]
@@ -380,71 +393,11 @@ def is_winner2(player_pos):
         return True
     return False
 
+
+
 def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls , current_player , game_id , user1,user2):
-    while True:
-        if is_winner1(player1_pos):
-            print("Player 1 won!")
-            break
-        elif is_winner2(player2_pos):
-            print("Player 2 won!")
-            break
-        print('game id:',game_id)
-        print(f'player1:{user1} | player2:{user2}')
-        print(f"It is the turn of {user1 if current_player == 1 else user2}")
-        print(f"{user1}'s walls: {player1_walls} | {user2}'s walls: {player2_walls}")
-        action = input("Do you want to 'move' or 'place wall'? ").strip().lower()
-        valid_moves = all_valid_moves(matrix, player1_pos if current_player == 1 else player2_pos)
-        if action == 'move':
-            move = input(f"Enter move {valid_moves}: ").strip()
-            if current_player == 1:
-                if move in valid_moves:
-                    player1_pos = move_player(matrix, player1_pos, move, 1)
-                elif move == 'exit':
-                    break
-                else:
-                    print("Invalid move! Try again.")
-                    continue
-            else:
-                if move in valid_moves:
-                    player2_pos = move_player(matrix, player2_pos, move, 2)
-                elif move == 'exit':
-                    break
-                else:
-                    print("Invalid move! Try again.")
-                    continue
-        elif action == 'place wall':
-            if (current_player == 1 and player1_walls > 0) or (current_player == 2 and player2_walls > 0):
-                i = int(input("Enter wall position (row): "))
-                if i == 'exit':
-                    break
-                else:
-                    j = int(input("Enter wall position (column): "))
-                    if j == 'exit':
-                        break
-                    orientation = input("Enter wall orientation (e.g. 'up-right', 'down-left'): ").strip().split('-')
-                    if is_valid_wall(matrix, (i, j), orientation[0], orientation[1]):
-                        new_matrix = copy.deepcopy(matrix)
-                        place_wall(new_matrix, (i, j), orientation[0], orientation[1])
-                        if dfs_1(new_matrix, player1_pos) and dfs_2(new_matrix, player2_pos):
-                            place_wall(matrix, (i, j), orientation[0], orientation[1])
-                            if current_player == 1:
-                                player1_walls -= 1
-                            else:
-                                player2_walls -= 1
-                    else:
-                        print("Invalid wall placement. Try again.")
-                        continue
-            else:
-                print("No walls left for this player!")
-                continue
-        elif action == 'exit':
-            break
-        else:
-            print("Invalid action! Please choose 'move' or 'place wall'.")
-            continue
-        show_board(matrix)
-        current_player = 2 if current_player == 1 else 1
-        game_info = {
+    main_condition = True
+    game_info = {
             "ID": game_id,
             "player1": user1,
             "player2": user2,
@@ -456,6 +409,163 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
             "current_player": current_player,
             "winner": 0
         }
+    while main_condition:
+        if is_winner1(player1_pos):
+            with open("WallWizard/games.json", 'r') as file:
+                games = json.load(file)
+            new_game = list()    
+            for game in games:
+                if game['player1'] == user1:
+                    game_info['winner'] = user1
+                    new_game.append(game_info)
+                else:
+                    new_game.append(game) 
+            gamejson = open("WallWizard/games.json", 'w') 
+            i = json.dumps(new_game , indent=4)
+            gamejson.write(i)
+            gamejson.close()
+
+            with open("WallWizard/users.json", 'r') as file:
+                users = json.load(file)
+            new_users = list()
+            for user in users:
+                if user["username"] == user2:
+                    user["losses"] = user["losses"] + 1
+                    user["score"] = user["score"] - 100
+                    new_users.append(user)
+                elif user["username"] == user1:
+                    user["wins"] = user["wins"] + 1
+                    user["score"] = user["score"] + 200
+                    new_users.append(user)
+                else:
+                    new_users.append(user)
+
+            userjson = open("WallWizard/users.json", 'w') 
+            i = json.dumps(new_users , indent=4)
+            userjson.write(i)
+            userjson.close()
+            main_condition = False
+            show_board(matrix)
+            console.print(f"{user1} won!", style="bold green")
+            exit()
+            break
+        elif is_winner2(player2_pos):
+            with open("WallWizard/games.json", 'r') as file:
+                games = json.load(file)
+            new_game = list()    
+            for game in games:
+                if game['player2'] == user2:
+                    game_info['winner'] = user2
+                    new_game.append(game_info)
+                else:
+                    new_game.append(game) 
+            gamejson = open("WallWizard/games.json", 'w') 
+            i =json.dumps(new_game , indent=4)
+            gamejson.write(i)
+            gamejson.close()
+            with open("WallWizard/users.json", 'r') as file:
+                users = json.load(file)
+            new_users = list()
+            for user in users:
+                if user["username"] == user1:
+                    user["losses"] = user["losses"] + 1
+                    user["score"] = user["score"] - 100
+                    new_users.append(user)
+                elif user["username"] == user2:
+                    user["wins"] = user["wins"] + 1
+                    user["score"] = user["score"] + 200
+                    new_users.append(user)
+                else:
+                    new_users.append(user)
+            userjson = open("WallWizard/users.json", 'w') 
+            i = json.dumps(new_users , indent=4)
+            userjson.write(i)
+            userjson.close()
+            main_condition = False
+            show_board(matrix)
+            console.print(f"{user2} won!", style="bold green")
+            exit()
+            break
+        print('game id:',game_id)
+        print(f'player1:{user1} | player2:{user2}')
+        console.print(f"It is the turn of {user1 if current_player == 1 else user2}", style="bold yellow")
+        console.print(f"{user1}'s walls: {player1_walls} | {user2}'s walls: {player2_walls}", style="cyan")
+        show_board(matrix)
+        action = input("Do you want to 'move' or 'place wall'? ").strip().lower()
+        valid_moves = all_valid_moves(matrix, player1_pos if current_player == 1 else player2_pos)
+        if action == 'move':
+            move = input(f"Enter move {valid_moves}: ")
+            if move == 'exit':
+                exit()
+                break
+            move = move.strip()
+            if current_player == 1:
+                if move in valid_moves:
+                    player1_pos = move_player(matrix, player1_pos, move, 1)
+
+                else:
+                    console.print("Invalid move! Try again.", style="red")
+                    continue
+            else:
+                if move in valid_moves:
+                    player2_pos = move_player(matrix, player2_pos, move, 2)
+
+                else:
+                    console.print("Invalid move! Try again.", style="red")
+                    continue
+        elif action == 'place wall':
+            if (current_player == 1 and player1_walls > 0) or (current_player == 2 and player2_walls > 0):
+                i = int(input("Enter wall position (row): "))
+                if i == 'exit':
+                    break
+                else:
+                    j = int(input("Enter wall position (column): "))
+                    if j == 'exit':
+                        break
+                    orientation = input("Enter wall orientation (e.g. 'up-right', 'down-left'): ")
+                    if '-' not in orientation:
+                        console.print('wrong move try agian!', style="red")
+                        continue
+                    else :
+                        orientation = orientation.strip().split('-')
+                        if is_valid_wall(matrix, (i, j), orientation[0], orientation[1]):
+                            new_matrix = copy.deepcopy(matrix)
+                            place_wall(new_matrix, (i, j), orientation[0], orientation[1])
+                            if dfs_1(new_matrix, player1_pos) and dfs_2(new_matrix, player2_pos):
+                                place_wall(matrix, (i, j), orientation[0], orientation[1])
+                                if current_player == 1:
+                                    player1_walls -= 1
+                                else:
+                                    player2_walls -= 1
+                        else:
+                            console.print("Invalid wall placement. Try again.", style="red")
+                            continue
+            elif move == 'exit':
+                break
+            else:
+                console.print("No walls left for this player!", style="red")
+                continue
+        elif action == 'exit':
+            console.print("Exiting the game. Goodbye", style="green")
+            exit()
+            break
+        else:
+            console.print("Invalid action! Please choose 'move' or 'place wall'.", style="red")
+            continue
+
+        current_player = 2 if current_player == 1 else 1
+        game_info = {
+                "ID": game_id,
+                "player1": user1,
+                "player2": user2,
+                "user1_position": player1_pos,
+                "user2_position": player2_pos,
+                "user1_walls": player1_walls,
+                "user2_walls": player2_walls,
+                "game_board": matrix,
+                "current_player": current_player,
+                "winner": 0
+            }
         if os.path.exists('WallWizard/games.json'):
             with open('WallWizard/games.json', 'r') as file:
                 games = json.load(file)
@@ -539,4 +649,3 @@ while True:
                     user1 = game['player1']
                     user2 = game['player2']
                     main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls , current_player,id,user1,user2)
-
