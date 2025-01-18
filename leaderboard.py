@@ -33,7 +33,7 @@ def display_leaderboard(leaderboard):
     console.print(khode_leaderboard)
     
 def leaderboard_main():
-    file_name = 'WallWizard/users.json'  
+    file_name = 'users.json'  
     users = load_users(file_name)  
     leaderboard = create_leaderboard(users)  
     display_leaderboard(leaderboard)  

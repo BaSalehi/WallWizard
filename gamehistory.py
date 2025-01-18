@@ -29,7 +29,7 @@ def display_gamehistory(gamehistory):
     console.print(table)
     
 def gamehistory():
-    file_name = 'WallWizard/games.json'
+    file_name = 'games.json'
     games = load_games(file_name)  
     gamehistory = create_leaderboard(games)  
     display_gamehistory(gamehistory)  

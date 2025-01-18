@@ -58,7 +58,7 @@ def update_item(file_path, item_id, new_value):
     file2.close()
 
 def generate_id():
-    with open('WallWizard/games.json', 'r') as file:
+    with open('games.json', 'r') as file:
         games = json.load(file)
     new_id = len(games) + 1
     return new_id
@@ -67,9 +67,9 @@ game_id = generate_id()
 
 def add_game(game_info):
     games = []
-    if os.path.exists('WallWizard/games.json'):
+    if os.path.exists('games.json'):
         try:
-            with open('WallWizard/games.json', 'r') as file:
+            with open('games.json', 'r') as file:
                 games = json.load(file)
         except json.JSONDecodeError:
             print("Error reading JSON file. Initializing with an empty list.")
@@ -79,7 +79,7 @@ def add_game(game_info):
             return
     games.append(game_info)
     try:
-        with open('WallWizard/games.json', 'w') as file:
+        with open('games.json', 'w') as file:
             json.dump(games, file, indent=4)
     except Exception as e:
         print(f"An error occurred while writing to the file: {e}")
@@ -411,7 +411,7 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
         }
     while main_condition:
         if is_winner1(player1_pos):
-            with open("WallWizard/games.json", 'r') as file:
+            with open("games.json", 'r') as file:
                 games = json.load(file)
             new_game = list()    
             for game in games:
@@ -420,12 +420,12 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
                     new_game.append(game_info)
                 else:
                     new_game.append(game) 
-            gamejson = open("WallWizard/games.json", 'w') 
+            gamejson = open("games.json", 'w') 
             i = json.dumps(new_game , indent=4)
             gamejson.write(i)
             gamejson.close()
 
-            with open("WallWizard/users.json", 'r') as file:
+            with open("users.json", 'r') as file:
                 users = json.load(file)
             new_users = list()
             for user in users:
@@ -440,7 +440,7 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
                 else:
                     new_users.append(user)
 
-            userjson = open("WallWizard/users.json", 'w') 
+            userjson = open("users.json", 'w') 
             i = json.dumps(new_users , indent=4)
             userjson.write(i)
             userjson.close()
@@ -450,7 +450,7 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
             exit()
             break
         elif is_winner2(player2_pos):
-            with open("WallWizard/games.json", 'r') as file:
+            with open("games.json", 'r') as file:
                 games = json.load(file)
             new_game = list()    
             for game in games:
@@ -459,11 +459,11 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
                     new_game.append(game_info)
                 else:
                     new_game.append(game) 
-            gamejson = open("WallWizard/games.json", 'w') 
+            gamejson = open("games.json", 'w') 
             i =json.dumps(new_game , indent=4)
             gamejson.write(i)
             gamejson.close()
-            with open("WallWizard/users.json", 'r') as file:
+            with open("users.json", 'r') as file:
                 users = json.load(file)
             new_users = list()
             for user in users:
@@ -477,7 +477,7 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
                     new_users.append(user)
                 else:
                     new_users.append(user)
-            userjson = open("WallWizard/users.json", 'w') 
+            userjson = open("users.json", 'w') 
             i = json.dumps(new_users , indent=4)
             userjson.write(i)
             userjson.close()
@@ -515,14 +515,16 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
                     continue
         elif action == 'place wall':
             if (current_player == 1 and player1_walls > 0) or (current_player == 2 and player2_walls > 0):
-                i = int(input("Enter wall position (row): "))
-                if i == 'exit':
-                    break
+                i = int(input("Enter(-1) to exit. Enter wall position (row): "))
+                if i == -1:
+                    exit()
                 else:
-                    j = int(input("Enter wall position (column): "))
-                    if j == 'exit':
-                        break
-                    orientation = input("Enter wall orientation (e.g. 'up-right', 'down-left'): ")
+                    j = int(input("Enter(-1) to exit. Enter wall position (column): "))
+                    if j == -1:
+                        exit()
+                    orientation = input("Enter(-1) to exit. Enter wall orientation (e.g. 'up-right', 'down-left'): ")
+                    if orientation == "-1":
+                        exit()
                     if '-' not in orientation:
                         console.print('wrong move try agian!', style="red")
                         continue
@@ -541,7 +543,7 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
                             console.print("Invalid wall placement. Try again.", style="red")
                             continue
             elif move == 'exit':
-                break
+                exit()
             else:
                 console.print("No walls left for this player!", style="red")
                 continue
@@ -566,14 +568,14 @@ def main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls
                 "current_player": current_player,
                 "winner": 0
             }
-        if os.path.exists('WallWizard/games.json'):
-            with open('WallWizard/games.json', 'r') as file:
+        if os.path.exists('games.json'):
+            with open('games.json', 'r') as file:
                 games = json.load(file)
             ids = []
             for i in games:
                 ids.append(i['ID'])
             if game_id in ids:
-                update_item('WallWizard/games.json', game_id, game_info)
+                update_item('games.json', game_id, game_info)
             else:
                 add_game(game_info)
 
@@ -587,10 +589,11 @@ while outer_loop:
         user1 = login.log_in()
     elif choice1 == '2':
         user1 = login.sign_up()
-    else:
+    elif choice1 == '3':
         print("Exiting the game. Goodbye")
         exit()
-    
+    else:
+        continue
     while inner_loop:
         choice2 = user_interface.game_menu()
         if choice2 == '1':
@@ -606,7 +609,7 @@ while outer_loop:
             if user2 == None:
                 continue
             else: 
-                game_id = user_interface.load_game(user1, user2, "WallWizard/games.json")
+                game_id = user_interface.load_game(user1, user2, "games.json")
                 outer_loop = False
                 inner_loop = False
                 break
@@ -635,7 +638,7 @@ while True:
         current_player = random.choice([1, 2])
         main_game(matrix , player1_pos , player2_pos , player1_walls , player2_walls , current_player , new_id , user1 , user2)
     elif choice2 == '2':
-        with open('WallWizard/games.json', 'r') as file:
+        with open('games.json', 'r') as file:
             games = json.load(file)
             for game in games:
                 if game['ID'] == game_id:

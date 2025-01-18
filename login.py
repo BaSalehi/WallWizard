@@ -3,11 +3,15 @@ import json
 import uuid
 import hashpass
 from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
 console = Console()
 
-users_json = 'WallWizard/users.json'
+users_json = 'users.json'
 
 def main_menu():
+    title_panel = Panel("WELCOME TO QUORIDOR", title=" ", border_style="bold blue", expand=True, padding=(1, 65), style="bold white")
+    console.print(title_panel)
     console.print("choose an option for the first player", style="cyan")
     option = input("1.Login\n2.Sign Up\n3.Exit\n")
     return option
@@ -17,7 +21,7 @@ def sign_up():
     if user == "exit":
         print("Exiting the game. Goodbye")
         exit()
-    while user == None:
+    while user == "":
         console.print("username cannot be empty.", style="red")
         user = input("Username: ")
         if user == "exit":
@@ -29,7 +33,7 @@ def sign_up():
         print("Exiting the game. Goodbye")
         exit()
 
-    while pas == None:
+    while pas == "":
         console.print("password cannot be empty.", style="red")
         pas = input("Password: ")   
         if pas == "exit":
@@ -47,7 +51,7 @@ def sign_up():
     if email == "exit":
         print("Exiting the game. Goodbye")
         exit()
-    while email == None:
+    while email == "":
         console.print("email cannot be empty.", style="red")
         email = input("Email: ")
         if email == "exit":
@@ -67,7 +71,7 @@ def sign_up():
     while not email_check:
         console.print("please enter a correct email", style="bold red")
         email = input("Email: ")
-        while email == None:
+        while email == "":
             console.print("email cannot be empty.", style="red")
             email = input("Email: ")
             if email == "exit":
@@ -92,7 +96,7 @@ def sign_up():
     while not user_check:
         console.print("Username or email is already taken. Please try again.", style="bold red")
         user = input("Username: ")
-        while user == None:
+        while user == "":
             console.print("username cannot be empty.", style="red")
             user = input("Username: ")
             if user == "exit":
@@ -100,7 +104,7 @@ def sign_up():
                 exit()
 
         email = input("Email: ")
-        while email == None:
+        while email == "":
             console.print("email cannot be empty.", style="red")
             email = input("Email: ")
             if email == "exit":
@@ -134,17 +138,17 @@ def check_email(email):
         return False
 
 def load_users():
-    if os.path.exists('WallWizard/users.json'):
-        with open('WallWizard/users.json', 'r') as file:
+    if os.path.exists('users.json'):
+        with open('users.json', 'r') as file:
             return json.load(file)
     return []
     
 
 def add_user(user):
     users = []
-    if os.path.exists('WallWizard/users.json'):
+    if os.path.exists('users.json'):
         try:
-            with open('WallWizard/users.json', 'r') as file:
+            with open('users.json', 'r') as file:
                 users = json.load(file)
         except json.JSONDecodeError:
             print("Error reading JSON file. Initializing with an empty list.")
@@ -155,7 +159,7 @@ def add_user(user):
     users.append(user)
 
     try:
-        with open('WallWizard/users.json', 'w') as file:
+        with open('users.json', 'w') as file:
             json.dump(users, file, indent=4)
     except Exception as e:
         print(f"An error occurred while writing to the file: {e}")
@@ -177,7 +181,7 @@ def user_in_json(users, username, password):
 
 def log_in():
     user = input("Username: ")
-    while user == None:
+    while user == "":
         console.print("username cannot be empty.", style="red")
         user = input("Username: ")
         if user == "exit":
@@ -189,7 +193,7 @@ def log_in():
 
     pas = input("Password: ")
 
-    while pas == None:
+    while pas == "":
         console.print("password cannot be empty.", style="red")
         pas = input("Password: ")   
         if pas == "exit":
@@ -217,4 +221,3 @@ def log_in():
     if user_check:
         console.print(f"successfully logged in as {user}", style="bold green")
         return user
-
